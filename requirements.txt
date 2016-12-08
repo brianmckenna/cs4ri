@@ -1,0 +1,7 @@
+aiohttp
+cChardet
+aiodns
+numpy
+scipy
+matplotlib
+scikit-learn
