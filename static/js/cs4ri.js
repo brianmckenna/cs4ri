@@ -1,4 +1,4 @@
-
+var TEST = {};
 
 // TODO: get array of inputs via service
 var model_inputs = [["predicted tide", "TIDE"], ["predicted wind speed", "WIND_SPEED"], ["predicted barometric pressure", "PRESSURE"], ["measured water level", "ZETA"]];
@@ -30,15 +30,12 @@ Blockly.Blocks['run_model'] = {
         this.setTooltip('model to run');
     }
 };
-/*
-Blockly.JavaScript['run_model'] = function(block) {
-    var value_model = Blockly.JavaScript.valueToCode(block, 'MODEL', Blockly.JavaScript.ORDER_ATOMIC);
-    var value_inputs = Blockly.JavaScript.valueToCode(block, 'INPUTS', Blockly.JavaScript.ORDER_ATOMIC);
-    // TODO: Assemble JavaScript into code variable.
-    var code = '...;\n';
-    return code;
-};
-*/
+//Blockly.JavaScript['run_model'] = function(block) {
+//    var model = Blockly.JavaScript.valueToCode(block, 'MODEL', Blockly.JavaScript.ORDER_ATOMIC);
+//    var inputs = Blockly.JavaScript.valueToCode(block, 'INPUTS', Blockly.JavaScript.ORDER_ATOMIC);
+//    var train = {"inputs": inputs, "model": model};
+//    console.log(train);
+//};
 
 
 
@@ -88,31 +85,31 @@ Blockly.Blocks['print_error'] = {
 /* ---- */
 /* main */
 /* ---- */
-var workspace = Blockly.inject('blocklyDiv', {
+TEST.workspace = Blockly.inject('blocklyDiv', {
     media: 'media/',
     toolbox: document.getElementById('toolbox')
 });
 
-//var code = Blockly.Python.workspaceToCode(workspace);
-//function updateFunction(event) {
-//    code = Blockly.Python.workspaceToCode(workspace);
-//}
-//workspace.addChangeListener(updateFunction);
-
 $.get({
     url: '/blocks',
-    success: function(xml_text) {
-        var xml = Blockly.Xml.textToDom(xml_text);
-        Blockly.Xml.domToWorkspace(xml, workspace);
+    success: function(xml) {
+        Blockly.Xml.domToWorkspace(Blockly.Xml.textToDom(xml), TEST.workspace);
     }
 });
 
 function saveBlock() {
-    var xml = Blockly.Xml.workspaceToDom(workspace);
-    var xml_text = Blockly.Xml.domToText(xml);
-    console.log(xml_text);
     $.post({
         url: '/blocks',
-        data: {"xml": xml_text},
+        data: {"xml": Blockly.Xml.domToText(Blockly.Xml.workspaceToDom(TEST.workspace))},
     });    
+}
+
+function testModel() {
+    Blockly.JavaScript.INFINITE_LOOP_TRAP = null;
+    var code = Blockly.JavaScript.workspaceToCode(TEST.workspace);
+    alert(code);
+    //$.post({
+    //    url: '/train',
+    //    data: data,
+    //});
 }

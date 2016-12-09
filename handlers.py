@@ -21,7 +21,9 @@ async def train(request):
         return web.Response(status=400, text='inputs required')
     if not model:
         return web.Response(status=400, text='model required')
-    res = model.train(model, inputs)
+    #res = model.train(model, inputs)
+    print(inputs)
+    print(model)
     return web.Response(status=200)
 
 async def forecast(request):
