@@ -1,7 +1,41 @@
-var TEST = {};
 
-// TODO: get array of inputs via service
-var model_inputs = [["predicted tide", "TIDE"], ["predicted wind speed", "WIND_SPEED"], ["predicted barometric pressure", "PRESSURE"], ["measured water level", "ZETA"]];
+var number_of_model_inputs = [["1","1"],["2","2"],["3","3"],["4","4"],["5","5"],["6","6"],["7","7"],["8","8"],["9","9"],["10","10"]];
+Blockly.Blocks['model_inputs'] = {
+    init: function() {
+        this.appendDummyInput().appendField("number of inputs").appendField(new Blockly.FieldDropdown(number_of_model_inputs), "NUMBER_OF_MODEL_INPUTS");
+        this.appendValueInput("MODEL_INPUT_1").appendField("input #1").setCheck(null);
+        this.setOutput(true, null);
+        this.setColour(170); // GREEN == INPUT
+        this.setTooltip('');
+    },
+    onchange: function(event) {
+        if( event.type == Blockly.Events.CHANGE && event.blockId == this.id ) {
+            number_of_inputs = this.getField("NUMBER_OF_MODEL_INPUTS").getValue();
+            number_of_connections = this.inputList.length-1;
+            if( number_of_inputs > number_of_connections ) {
+                for( i=number_of_connections; i<number_of_inputs; i++ ) {
+                    this.appendValueInput("MODEL_INPUT_"+(i+1)).appendField("input #"+(i+1)).setCheck(null);
+                }
+            }
+            else if( number_of_inputs < number_of_connections ) {
+                for( i=number_of_connections; i>number_of_inputs; i-- ) {
+                    this.removeInput("MODEL_INPUT_"+i);
+                }
+            }
+        }
+    }
+};
+
+
+/*
+ *  0 Simple:     Linear Regression
+ *  1 Complex #1: Neural Network
+ *  2 Complex #2: Support Vector Machine'
+ *  3 Complex #3: Random Forest
+ *  4 Surprise:   Select a random one
+ *
+ */
+var model_inputs = [["predicted tide", "0"], ["predicted wind speed", "1"], ["predicted barometric pressure", "2"], ["measured water level", "3"]];
 Blockly.Blocks['model_input_type'] = {
     init: function() {
         this.appendDummyInput().appendField("input type").appendField(new Blockly.FieldDropdown(model_inputs), "MODEL_INPUT_TYPE");
@@ -11,7 +45,15 @@ Blockly.Blocks['model_input_type'] = {
     }
 };
 
-var model_types = [["Simple", "REGRESSION"], ["Complex #1", "NEURAL1"], ["Complex #2", "NEURAL2"], ["Surprise", "FOREST"]];
+/*
+ *  0 Simple:     Linear Regression
+ *  1 Complex #1: Neural Network
+ *  2 Complex #2: Support Vector Machine'
+ *  3 Complex #3: Random Forest
+ *  4 Surprise:   Select a random one
+ *
+ */
+var model_types = [["Simple", "0"], ["Complex #1", "1"], ["Complex #2", "2"], ["Complex #3", "3"], ["Surprise", "4"]];
 Blockly.Blocks['model_type'] = {
     init: function() {
         this.appendDummyInput().appendField("model type").appendField(new Blockly.FieldDropdown(model_types), "MODEL_TYPE");
@@ -25,49 +67,11 @@ Blockly.Blocks['run_model'] = {
     init: function() {
         this.appendValueInput("MODEL").setCheck(null).appendField("model");
         this.appendValueInput("INPUTS").setCheck("Array").appendField("inputs");
-        this.setPreviousStatement(true, null);
+        this.setPreviousStatement(false, null);
         //this.setColour(330); // BLACK == black-box
         this.setTooltip('model to run');
     }
 };
-//Blockly.JavaScript['run_model'] = function(block) {
-//    var model = Blockly.JavaScript.valueToCode(block, 'MODEL', Blockly.JavaScript.ORDER_ATOMIC);
-//    var inputs = Blockly.JavaScript.valueToCode(block, 'INPUTS', Blockly.JavaScript.ORDER_ATOMIC);
-//    var train = {"inputs": inputs, "model": model};
-//    console.log(train);
-//};
-
-
-
-
-var number_of_model_inputs = [["1","1"],["2","2"],["3","3"],["4","4"],["5","5"],["6","6"],["7","7"],["8","8"],["9","9"],["10","10"]];
-Blockly.Blocks['model_inputs'] = {
-    init: function() {
-        this.appendDummyInput().appendField("number of inputs").appendField(new Blockly.FieldDropdown(number_of_model_inputs), "NUMBER_OF_MODEL_INPUTS");
-        this.appendValueInput("model_input_1").appendField("input #1").setCheck(null);
-        this.setOutput(true, null);
-        this.setColour(170); // GREEN == INPUT
-        this.setTooltip('');
-    },
-    onchange: function(event) {
-        if( event.type == Blockly.Events.CHANGE && event.blockId == this.id ) {
-            number_of_inputs = this.getField("NUMBER_OF_MODEL_INPUTS").getValue();
-            number_of_connections = this.inputList.length-1;
-            if( number_of_inputs > number_of_connections ) {
-                for( i=number_of_connections; i<number_of_inputs; i++ ) { 
-                    this.appendValueInput("model_input_"+(i+1)).appendField("input #"+(i+1)).setCheck(null);
-                }
-            }
-            else if( number_of_inputs < number_of_connections ) {
-                for( i=number_of_connections; i>number_of_inputs; i-- ) { 
-                    this.removeInput("model_input_"+i);
-                }
-            }
-        }
-    }
-};
-
-
 
 
 Blockly.Blocks['print_error'] = {
@@ -85,7 +89,7 @@ Blockly.Blocks['print_error'] = {
 /* ---- */
 /* main */
 /* ---- */
-TEST.workspace = Blockly.inject('blocklyDiv', {
+var workspace = Blockly.inject('blocklyDiv', {
     media: 'media/',
     toolbox: document.getElementById('toolbox')
 });
@@ -93,21 +97,28 @@ TEST.workspace = Blockly.inject('blocklyDiv', {
 $.get({
     url: '/blocks',
     success: function(xml) {
-        Blockly.Xml.domToWorkspace(Blockly.Xml.textToDom(xml), TEST.workspace);
+        Blockly.Xml.domToWorkspace(Blockly.Xml.textToDom(xml), workspace);
     }
 });
 
 function saveBlock() {
     $.post({
         url: '/blocks',
-        data: {"xml": Blockly.Xml.domToText(Blockly.Xml.workspaceToDom(TEST.workspace))},
+        data: {"xml": Blockly.Xml.domToText(Blockly.Xml.workspaceToDom(workspace))},
     });    
 }
 
 function testModel() {
-    Blockly.JavaScript.INFINITE_LOOP_TRAP = null;
-    var code = Blockly.JavaScript.workspaceToCode(TEST.workspace);
-    alert(code);
+    //Blockly.JavaScript.INFINITE_LOOP_TRAP = null;
+    var code = Blockly.JavaScript.workspaceToCode(workspace);
+    console.log(code);
+    try {
+        eval(code);
+        console.log(model_type);
+        console.log(data);
+    } catch (e) {
+        alert(e);
+    }
     //$.post({
     //    url: '/train',
     //    data: data,
