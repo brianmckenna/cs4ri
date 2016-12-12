@@ -24,6 +24,21 @@
 
     <h1>CS4RI Data Challenge &gt; Predict the Storm Surge!</h1>
 
+    <!--
+    <div class="alert alert-warning alert-dismissable" role="alert">
+      <strong>Warning!</strong> Better check yourself, you're not looking too good.
+    </div>
+    -->
+
+    <p>
+      <div class="form-group row">
+        <label for="id" class="col-xs-2 col-form-label">CS4RI Summit ID</label>
+        <div class="col-xs-10">
+          <input class="form-control" type="text" value="6 digit CS4RI Summit ID" id="id">
+        </div>
+      </div>
+    </p>
+
     <div id="blocklyDiv" style="height: 500px; width: 800px;"></div>
 
     <p>
@@ -40,6 +55,9 @@
         <block type="logic_null"></block>
         <block type="controls_forEach"></block>
         <block type="controls_flow_statements"></block>
+        <block type="text"></block>
+        <block type="text_print"></block>
+        <block type="text_prompt_ext"></block>
       </category>
       <category name="Model">
         <block type="model_input_type"></block>
@@ -47,6 +65,7 @@
         <block type="run_model"></block>
         <block type="model_inputs"></block>
         <block type="print_error"></block>
+        <block type="procedures_callnoreturn"></block>
       </category>
       <category name="Variables" custom="VARIABLE"></category>
       <category name="Functions" custom="PROCEDURE"></category>
