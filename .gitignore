@@ -1,6 +1,9 @@
 .ignore
 data/COOPS
 *.shelve.db
+*.shelve
+*.png
+
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

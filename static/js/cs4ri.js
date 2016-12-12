@@ -92,9 +92,10 @@ Blockly.Blocks['print_error'] = {
 var workspace = Blockly.inject('blocklyDiv', {
     media: 'media/',
     toolbox: document.getElementById('toolbox'),
+    scrollbars: false,
     zoom: {
-        controls: true,
-        wheel: true,
+        controls: false,
+        wheel: false,
         startScale: 0.7,
         maxScale: 1,
         minScale: 0.5,
@@ -121,18 +122,33 @@ function postModel(data) {
     //if( !$(this).val() ) {
     //    $(".alert").alert();   
     //}
-    data["id"] = $("#id").val();
+    data["cs4ri_id"] = $("#cs4ri_id").val();
     console.log(data);
-    $.post({
-        url: '/train',
-        data: JSON.stringify(data),
-        dataType: 'json',
-    });
+    $.post(
+        '/train',
+        JSON.stringify(data),
+        function(res) {
+            //console.log(res);
+            //alert( "success" );
+            $('#imageDiv').html('<img src="data:image/png;base64,'+res+'" />');
+        }
+        //'json'
+    )
+    //.done(function() {
+    //    alert( "second success" );
+    //})
+    //.fail(function() {
+    //    alert( "error" );
+    //})
+    //.always(function() {
+    //    alert( "finished" );
+    //});
+
 }
 
 function testModel() {
     var code = Blockly.JavaScript.workspaceToCode(workspace);
-    //console.log(code);
+    console.log(code);
     try {
         eval(code);
     } catch (e) {
