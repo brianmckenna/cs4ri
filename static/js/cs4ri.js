@@ -133,7 +133,7 @@ function postModel(data) {
             $('#imageDiv').html('<img src="data:image/png;base64,'+res+'" />');
         }
         //'json'
-    )
+    );
     //.done(function() {
     //    alert( "second success" );
     //})
@@ -155,3 +155,18 @@ function testModel() {
         //alert(e); // TODO: bootstrap alert
     }
 }
+
+function submitEntry() {
+    
+    $.post(
+        '/forecast',
+        JSON.stringify({"cs4ri_id": $("#cs4ri_id").val()}),
+        function(res) {
+            //console.log(res);
+            //alert( "success" );
+            $('#forecastImageDiv').html('<img src="data:image/png;base64,'+res+'" />');
+            $('#forecast_modal').modal('show')
+        }
+    );
+}
+

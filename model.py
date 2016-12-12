@@ -16,6 +16,7 @@ sns.set(style="darkgrid", palette="Set2")
 # run at LOAD
 data = np.load('data/train.npz')
 test_data = np.load('data/test.npz')
+idx_ = range(len(test_data['k004'].tolist()))
 
 # masks values outside window
 mask = data['mask'][0] | data['mask'][1] | data['mask'][2]
@@ -41,15 +42,18 @@ def _get_output(idx):
 
 def forecast(cs4ri_id):
 
-    (model, input_keys, m) = db.get('cs4ri_id', None)
+    (model, input_keys, m) = db.get(cs4ri_id, None)
 
-    X_test = _get_inputs(input_keys, splice(None,None,None))  # predictors
-    y_test = _get_output(splice(None,None,None))  
+    X_test = _get_inputs(input_keys, idx_)  # predictors
+    y_test = _get_output(idx_)  
 
     predict = m.predict(X_test)
     mae = np.mean((predict-y_test)**2)
     print(mae)
+    print(predict)
+    print(predict.shape)
 
+    return forecast_plot(predict)
 
 def train(cs4ri_id, model, input_keys):
 
@@ -147,5 +151,31 @@ def training_plots(pv):
 
     with io.BytesIO() as _buffer:
         fig.savefig(_buffer, dpi=dpi, bbox_inches='tight', pad_inches=0.0)#, transparent=True)
+        plt.close(fig)
         _buffer.seek(0)
         return base64.b64encode(_buffer.getvalue())
+
+def forecast_plot(predict):
+
+    fig, ax1 = plt.subplots(1, sharex=True, sharey=True)
+
+    ax1.plot(predict, 'r-', linewidth=0.25)
+    ax1.axhline(y=predict.max(), color='b', linestyle='--', linewidth=0.25)
+    plt.setp(ax1.get_xticklabels(), visible=False)
+    plt.setp(ax1.get_yticklabels(), fontsize='4')
+
+    dpi = 300
+    fig.set_alpha(0)
+    fig.set_figheight(400/dpi)
+    fig.set_figwidth(700/dpi)
+    #fig.set_figheight(500/dpi)
+    #fig.set_figwidth(300/dpi)
+
+    ax1.set_ylim([-2,6])
+
+    with io.BytesIO() as _buffer:
+        fig.savefig(_buffer, dpi=dpi, bbox_inches='tight', pad_inches=0.0)#, transparent=True)
+        plt.close(fig)
+        _buffer.seek(0)
+        return base64.b64encode(_buffer.getvalue())
+

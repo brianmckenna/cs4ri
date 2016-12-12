@@ -43,4 +43,4 @@ async def forecast(request):
 
     res = model.forecast(cs4ri_id)
 
-    return web.Response(status=200)
+    return web.Response(body=res, status=200)

@@ -16,6 +16,10 @@
         height: 500px;
         width: 300px;
     }
+    #forecastImageDiv img {
+        display:block;
+        margin:auto;
+    }
     </style>
 
     <!-- Bootstrap CSS -->
@@ -53,6 +57,26 @@
       <button onclick="testModel();">Test Model</button>
       <button onclick="submitEntry();">Submit Entry</button>
     </div>
+
+    <div class="modal fade" id="forecast_modal">
+      <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+            <h4 class="modal-title">Forecast for Superstorm Sandy</h4>
+          </div>
+          <div class="modal-body">
+            <div id="forecastImageDiv"></div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
 
     <xml id="toolbox" style="display: none">
       <category name="Logic">
