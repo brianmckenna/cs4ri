@@ -27,6 +27,8 @@ idx3 = np.where(data['mask'][2])
 
 db = shelve.open('models.shelve')
 
+forecasts = shelve.open('forecasts.shelve')
+
 def _get_inputs(input_keys, idx):
     inputs = []
     for k in input_keys:
@@ -41,19 +43,21 @@ def _get_output(idx):
     return data['k004'][idx]
 
 def forecast(cs4ri_id):
-
     (model, input_keys, m) = db.get(cs4ri_id, None)
-
     X_test = _get_inputs(input_keys, idx_)  # predictors
     y_test = _get_output(idx_)  
-
     predict = m.predict(X_test)
-    mae = np.mean((predict-y_test)**2)
-    print(mae)
-    print(predict)
-    print(predict.shape)
+    forecasts[cs4ri_id] = predict.tolist()
+    cmin, cmean, cmax = consensus()
+    return forecast_plot(predict, cmin, cmean, cmax)
 
-    return forecast_plot(predict)
+def consensus():
+    f = np.array([v for k,v in forecasts.items()])
+    print(f.shape)
+    print(f.min(axis=0))
+    print(f.max(axis=0))
+    print(f.mean(axis=0))
+    return [f.min(axis=0), f.mean(axis=0), f.max(axis=0)]
 
 def train(cs4ri_id, model, input_keys):
 
@@ -147,7 +151,7 @@ def training_plots(pv):
     #fig.set_figheight(500/dpi)
     #fig.set_figwidth(300/dpi)
 
-    ax1.set_ylim([-2,6])
+    ax1.set_ylim([-3,7])
 
     with io.BytesIO() as _buffer:
         fig.savefig(_buffer, dpi=dpi, bbox_inches='tight', pad_inches=0.0)#, transparent=True)
@@ -155,12 +159,17 @@ def training_plots(pv):
         _buffer.seek(0)
         return base64.b64encode(_buffer.getvalue())
 
-def forecast_plot(predict):
+#def forecast_plot(predict):
+def forecast_plot(predict, cmin, cmean, cmax):
 
     fig, ax1 = plt.subplots(1, sharex=True, sharey=True)
 
     ax1.plot(predict, 'r-', linewidth=0.25)
+    ax1.plot(cmin,    'b-', linewidth=0.25)
+    ax1.plot(cmean,   'k-', linewidth=0.25)
+    ax1.plot(cmax,    'g-', linewidth=0.25)
     ax1.axhline(y=predict.max(), color='b', linestyle='--', linewidth=0.25)
+    ax1.text(0.1, 0.92, '%.4f ft' % predict.max(), horizontalalignment='center', verticalalignment='center', transform = ax1.transAxes)
     plt.setp(ax1.get_xticklabels(), visible=False)
     plt.setp(ax1.get_yticklabels(), fontsize='4')
 
@@ -171,7 +180,7 @@ def forecast_plot(predict):
     #fig.set_figheight(500/dpi)
     #fig.set_figwidth(300/dpi)
 
-    ax1.set_ylim([-2,6])
+    ax1.set_ylim([-3,7])
 
     with io.BytesIO() as _buffer:
         fig.savefig(_buffer, dpi=dpi, bbox_inches='tight', pad_inches=0.0)#, transparent=True)

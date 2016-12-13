@@ -1,5 +1,9 @@
 
-var number_of_model_inputs = [["1","1"],["2","2"],["3","3"],["4","4"],["5","5"],["6","6"],["7","7"],["8","8"],["9","9"],["10","10"]];
+/* ---------------- */
+/* Number of Inputs */
+/* ---------------- */
+//var number_of_model_inputs = [["1","1"],["2","2"],["3","3"],["4","4"],["5","5"],["6","6"],["7","7"],["8","8"],["9","9"],["10","10"]];
+var number_of_model_inputs = [["1","1"],["2","2"],["3","3"],["4","4"],["5","5"],["6","6"]];
 Blockly.Blocks['model_inputs'] = {
     init: function() {
         this.appendDummyInput().appendField("number of inputs").appendField(new Blockly.FieldDropdown(number_of_model_inputs), "NUMBER_OF_MODEL_INPUTS");
@@ -27,15 +31,17 @@ Blockly.Blocks['model_inputs'] = {
 };
 
 
-/*
- *  0 Simple:     Linear Regression
- *  1 Complex #1: Neural Network
- *  2 Complex #2: Support Vector Machine'
- *  3 Complex #3: Random Forest
- *  4 Surprise:   Select a random one
- *
- */
+/* ------------------------------------ */
+/* Input Types                          */
+/* ------------------------------------ */
 var model_inputs = [["predicted tide", "k009"], ["24 predicted wind speed", "k243"], ["24 predicted barometric pressure", "k241"], ["24 measured water level", "k244"]];
+$.get(
+    '/inputs',
+    function(res) {
+        console.log(res);
+        eval(res);
+    }
+);
 Blockly.Blocks['model_input_type'] = {
     init: function() {
         this.appendDummyInput().appendField("input type").appendField(new Blockly.FieldDropdown(model_inputs), "MODEL_INPUT_TYPE");
@@ -45,15 +51,15 @@ Blockly.Blocks['model_input_type'] = {
     }
 };
 
-/*
- *  0 Simple:     Linear Regression
- *  1 Complex #1: Neural Network
- *  2 Complex #2: Support Vector Machine'
- *  3 Complex #3: Random Forest
- *  4 Surprise:   Select a random one
- *
- */
-var model_types = [["Simple", "0"], ["Complex #1", "1"], ["Complex #2", "2"], ["Complex #3", "3"], ["Surprise", "4"]];
+/* ------------------------------------ */
+/* Model Types                          */
+/* 0 Simple:     Linear Regression      */
+/* 1 Complex #1: Neural Network         */
+/* 2 Complex #2: Support Vector Machine */
+/* 3 Complex #3: Random Forest          */
+/* 4 Surprise:   Select a random one    */
+/* ------------------------------------ */
+var model_types = [["Simple: Linear Regression", "0"], ["Complex #1: Artificial Neural Network", "1"], ["Complex #2: Support Vector Machine", "2"], ["Complex #3: Random Forest Regression", "3"], ["Surprise Me!", "4"]];
 Blockly.Blocks['model_type'] = {
     init: function() {
         this.appendDummyInput().appendField("model type").appendField(new Blockly.FieldDropdown(model_types), "MODEL_TYPE");
