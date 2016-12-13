@@ -39,7 +39,7 @@ async def forecast(request):
     cs4ri_id   = data.get('cs4ri_id', None)
     if cs4ri_id is None:
         return web.Response(status=400, text='CS4RI id required')
-    res = model.forecast(cs4ri_id)
+    res = await model.forecast(cs4ri_id)
     return web.Response(body=res, status=200)
 
 async def consensus(request):
