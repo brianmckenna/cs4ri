@@ -24,9 +24,6 @@ data_trn = np.load('data/train.npz')
 data_tst = np.load('data/test.npz')
 
 
-
-
-
 # SANDY FULL INDEX 23/00Z to 31/00Z
 _dt = data_tst['dt']
 print(_dt.shape)
@@ -102,7 +99,9 @@ def _get_output(data, idx):
 
 
 async def forecast(cs4ri_id):
+
     (model, input_keys, m) = db.get(cs4ri_id, None)
+
     X_test = _get_inputs(data_tst, input_keys, idx_dt)  # predictors
     y_test = _get_output(data_tst, idx_dt)
 
@@ -202,13 +201,19 @@ def train(cs4ri_id, model, input_keys):
 # -----------------------------------------------------------------------------
 async def data_fountain(predict, cmin, cmean, cmax, dt):
 
-    _id = "SXajFa85CSzKjxphx" # TODO
+    _id = "Rxev6Ao3aQ75BiogL" # TODO
+
+    # FOR OBS (time based) ALSO COMPUTE LEADERBOARD HERE (MAX AND MAE)
+    cmean = cmean.tolist()
+    for i in range(150, len(cmean)):
+        cmean[i] = None
 
     times = list(map(lambda l: l.isoformat(), dt.tolist()))
     df = {
             "data": {
+                "times": times,
                 "consensus": {
-                    "values": cmean.tolist(),
+                    "values": cmean,
                     "units": "feet",
                     "type":  "timeSeries",
                     "times": times
