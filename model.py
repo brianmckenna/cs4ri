@@ -93,6 +93,8 @@ async def results():
     for k,v in forecasts.items():
         mae = np.mean((v[mask_idx]-obs[mask_idx])**2)
         r[k] = mae
+    cmin, cmean, cmax = consensus()
+    r['AVERAGE FORECAST (CONSENSUS)'] = np.mean((cmean[mask_idx]-obs[mask_idx])**2)
     return sorted(r.items(), key=operator.itemgetter(1))
 
 def consensus():
@@ -306,14 +308,13 @@ def forecast_plot(dt, predict, cmin, cmean, cmax):
 async def time_offset():
     sandy_seconds = 691200.0
     four_hours_seconds = 14400.0
-    running_seconds = (datetime.datetime.now() - datetime.datetime(2016,12,13,22,0,0)).total_seconds()
+    running_seconds = (datetime.datetime.now() - datetime.datetime(2016,12,14,8,0,0)).total_seconds()
     sandy_minutes = ((sandy_seconds/four_hours_seconds)*running_seconds)/60
-    return int(sandy_minutes/6)
+    return max(int(sandy_minutes/6),10)
 
 async def update_obs():
-    for i in range(0,30):
-        pass
-        #print(await time_offset())
+    for i in range(0,30000):
+        print(await time_offset())
         #print(i)
         #await obs_data_fountain()
         await asyncio.sleep(10)

@@ -53,4 +53,4 @@ async def forecast(request):
 
 async def consensus(request):
     res = model.consensus()
-    return web.Response(text="ok", status=200)
+    return web.Response(status=200)
