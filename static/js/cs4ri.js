@@ -100,7 +100,7 @@ var workspace = Blockly.inject('blocklyDiv', {
     toolbox: document.getElementById('toolbox'),
     scrollbars: false,
     zoom: {
-        controls: false,
+        controls: true,
         wheel: false,
         startScale: 0.7,
         maxScale: 1,
@@ -171,6 +171,7 @@ function submitEntry() {
             //console.log(res);
             //alert( "success" );
             $('#forecastImageDiv').html('<img src="data:image/png;base64,'+res+'" />');
+            $('#model_cs4ri_id').html($("#cs4ri_id").val());
             $('#forecast_modal').modal('show')
         }
     );

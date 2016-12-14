@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="refresh" content="30" >
+    <title>RPS ASA: CS4RI Data Challenge</title>
+    <style>
+    body {
+      background-color: #fff;
+      font-family: sans-serif;
+    }
+    h1 {
+      font-weight: normal;
+      font-size: 140%;
+    }
+    </style>
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="css/datatables.min.css"/>
+
+  </head>
+
+  <body>
+
+    <table id="table_id" class="display">
+      <thead>
+        <tr>
+          <th>CS4RI ID</th>
+          <th>Mean Absolute Error</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for k,v in results %}
+        <tr>
+          <td>{{ k }}</td>
+          <td>{{ v }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <h5>last refreshed: {{ update.strftime('%b %d %Y %H:%M%p') }}</h5>
+
+    <script src="js/jquery-3.1.1.min.js"></script>
+    <script src="js/tether.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="js/datatables.min.js"></script>
+    <script type="text/javascript">
+
+var table = $(document).ready( function () {
+    $('#table_id').DataTable({
+        "paging":   false,
+        "order": [[ 1, "asc" ]],
+        "info":     false,
+        "searching": false,
+        "pageLength": 25
+    });
+} );
+
+    </script>
+
+  </body>
+</html>

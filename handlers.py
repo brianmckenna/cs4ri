@@ -1,4 +1,7 @@
 from aiohttp import web
+import aiohttp_jinja2
+
+import datetime
 
 import html
 import inputs
@@ -19,6 +22,12 @@ async def post_blocks(request):
 
 async def get_inputs(request):
     return web.Response(text='model_inputs = '+json.dumps([[v,k] for k,v in sorted(inputs.inputs.items(), key=operator.itemgetter(1))]), status=200)  
+
+@aiohttp_jinja2.template('results.jinja2')
+async def results(request):
+    res = await model.results()
+    return {'results': res, 'update': datetime.datetime.now()}
+
 
 async def train(request):
     data = await request.json()
